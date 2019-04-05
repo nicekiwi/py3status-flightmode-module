@@ -1,28 +1,25 @@
 # -*- coding: utf-8 -*-
 """
-Example module that says 'Hello World!'
+Display text "FM" when the Wifi radio is turned off.
 
-This demonstrates how to produce a simple custom module.
+Requires "nmcli".
 """
 
 
 class Py3status:
 
-    cache_timeout = 1
-    format = '[\?if=status&color=good FM]'
+    cache_timeout = 10
+    format = '[\?if=status=disabled&color=good FM]'
     
     def flight_mode(self):
-    	result = {}
-    	if self._check_radio_status() == "disabled":
-    	    result["status"] = "disabled"
     	return {
-            'full_text': self.py3.safe_format(self.format, result),
+            'full_text': self.py3.safe_format(self.format, { "status": self._check_radio_status() }),
             'cached_until': self.py3.time_in(self.cache_timeout)
         }
 
 
     def _check_radio_status(self):
-        return self.py3.command_output("nmcli radio wifi")
+        return self.py3.command_output("nmcli radio wifi").strip('\n')
 
 if __name__ == "__main__":
     """
